@@ -83,20 +83,8 @@ class Dynamics:
     def compute_relative_pose(self, state, relative_pose, joint=0):
         pass
 
-class DifferentialDrive(Dynamics):
-    
-    def __init__(self):
-        Dynamics.__init__(self, state_space=SE2)
-        self.se2_dynamics = SE2Dynamics()
-    
-    def _check_commands(self, commands):
-        commands = np.array(commands)
-        check(commands, 'array[2],finite')
-        
-    def _integrate(self, state, commands, dt):
-        driving = commands[0]
-        steering = commands[1]
-        commands = [driving, steering, 0]
-        self.s
-        
+    def __str__(self):
+        return ("Dyn:%s(pose:%s,shape:%s,cmds:%s)" % 
+                (self.__class__.__name__,
+                 self.__pose_space, self.__shape_space, self.commands_spec))
  

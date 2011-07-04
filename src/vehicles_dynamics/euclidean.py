@@ -10,7 +10,9 @@ class EuclideanVel(Dynamics):
         self.ndim = ndim
         self.max_velocity = max_velocity
         pose_space = geometry.Euclidean(ndim)
-        Dynamics.__init__(self, pose_space=pose_space, commands_spec=[(-1, 1)] * ndim)
+        Dynamics.__init__(self, pose_space=pose_space,
+                            shape_space=None,
+                            commands_spec=[(-1, 1)] * ndim)
     
     def _integrate(self, state, commands, dt):
         return state + commands * dt
@@ -24,14 +26,19 @@ class EuclideanForce(Dynamics):
         self.ndim = ndim
         self.max_force = max_force
         self.mass = mass
-        pose_space = ProductManifold(geometry.Euclidean(ndim), geometry.Euclidean(ndim))
-        Dynamics.__init__(self, pose_space=pose_space, commands_spec=[(-1, 1)] * ndim)
+        pose_space = ProductManifold((geometry.Euclidean(ndim),
+                                      geometry.Euclidean(ndim)))
+        Dynamics.__init__(self,
+                          pose_space=pose_space,
+                          shape_space=None,
+                          commands_spec=[(-1, 1)] * ndim)
     
     def _integrate(self, state, commands, dt):
         position, velocity = state
         forces = np.array(commands)
-        position2 = position + velocity * dt + 0.5 * velocity * dt * dt 
-        velocity2 = velocity + forces * dt 
+        acceleration = forces / self.mass
+        position2 = position + velocity * dt + 0.5 * acceleration * dt * dt 
+        velocity2 = velocity + acceleration * dt 
         return (position2, velocity2)
 
         
