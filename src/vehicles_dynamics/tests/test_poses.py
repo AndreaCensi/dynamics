@@ -1,7 +1,5 @@
 from geometry import SE2, SE2_from_translation_angle
 
-from dynamics import rb_SE2_v
-
 from numpy import radians
 import unittest
 import numpy as np
@@ -9,7 +7,10 @@ import numpy as np
 class PoseTest(unittest.TestCase):
     
     def test_poses_SE2(self):
-        dynamics = rb_SE2_v
+        from vehicles_dynamics import SE2Dynamics
+
+        dynamics = SE2Dynamics(max_linear_velocity=[1, 1],
+                               max_angular_velocity=1)
         
         dt = 0.1
         
@@ -39,12 +40,12 @@ class PoseTest(unittest.TestCase):
         for initial, commands, final in tests:
             start_state = SE2_from_translation_angle(*initial)
             final_state = SE2_from_translation_angle(*final)
+            print('%s -> [%s] -> %s' % 
+                  (SE2.friendly(start_state), commands, SE2.friendly(final_state)))
             commands = np.array(commands)
             actual = dynamics.integrate(start_state, +commands, dt)              
             SE2.assert_close(actual, final_state)
             start2 = dynamics.integrate(final_state, -commands, dt)
             SE2.assert_close(start_state, start2)
             
-#            print('%s -> %s' % 
-#                  (SE2.friendly(start_state), SE2.friendly(final_state)))
-#        
+        

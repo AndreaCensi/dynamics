@@ -11,9 +11,9 @@ def read(fname):
 long_description = read('README.rst')
     
 
-setup(name='PyDynamics',
+setup(name='PyVehiclesDynamics',
       author="Andrea Censi",
-      author_email="AUTHOR_EMAIL",
+      author_email="andrea@cds.caltech.edu",
       url='',
       
       description=description,
@@ -31,11 +31,11 @@ setup(name='PyDynamics',
       ],
 
 	  version=version,
-      download_url='http://github.com/GITHUB_USER/GITHUB_PROJECT/tarball/%s' % version,
+      download_url='http://github.com/AndreaCensi/vehicles_dynamics/tarball/%s' % version,
       
       package_dir={'':'src'},
       packages=find_packages('src'),
-      install_requires=[ ],
+      install_requires=['PyGeometry', 'PyContracts'],
       tests_require=['nose'],
       entry_points={},
 )
