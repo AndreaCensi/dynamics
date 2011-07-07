@@ -1,4 +1,4 @@
-from contracts import contract, check, new_contract
+from contracts import contract, new_contract
 from abc import ABCMeta, abstractmethod
 
 from geometry import ProductManifold
@@ -71,7 +71,7 @@ class Dynamics:
             msg += '\n   state: %s' % state
             msg += '\ncommands: %s' % commands
             msg += '\n%s' % e
-            raise DynamicsException(msg)
+            raise DynamicsException(self, msg)
         
         self.__state_space.belongs(new_state)
         return new_state
@@ -81,6 +81,10 @@ class Dynamics:
         pass
 
     def compute_relative_pose(self, state, relative_pose, joint=0):
+        return self._compute_relative_pose(state, relative_pose, joint)
+
+    #@abstractmethod # XXX
+    def _compute_relative_pose(self, state, relative_pose, joint):
         pass
 
     def __str__(self):
@@ -88,3 +92,11 @@ class Dynamics:
                 (self.__class__.__name__,
                  self.__pose_space, self.__shape_space, self.commands_spec))
  
+class OneJointDynamics(Dynamics):
+    def _compute_relative_pose(self, state, relative_pose, joint):
+        if joint != 0:
+            raise Exception('Only one joint in this robot.')
+        group = self.state_space()
+        return group.multiply(state, relative_pose)
+
+    

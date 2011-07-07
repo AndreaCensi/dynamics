@@ -1,14 +1,14 @@
-from . import Dynamics, np, contract
+from . import OneJointDynamics, np, contract
 from geometry import (SE2, se2_from_linear_angular, SE2_from_se2)
 
-class SE2Dynamics(Dynamics):
+class SE2Dynamics(OneJointDynamics):
     
     @contract(max_linear_velocity='seq[2](>0)',
               max_angular_velocity='>0',)
     def __init__(self, max_linear_velocity, max_angular_velocity):
         self.max_linear_velocity = max_linear_velocity
         self.max_angular_velocity = max_angular_velocity
-        Dynamics.__init__(self,
+        OneJointDynamics.__init__(self,
                           pose_space=SE2,
                           shape_space=None,
                           commands_spec=[(-1, +1), (-1, +1), (-1, +1)])
