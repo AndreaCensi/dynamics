@@ -3,7 +3,7 @@ from geometry import SO2, hat_map_2d
 
     
 class CircleVel(SimpleKinematics):
-    ''' Particle on S1 controlled in velocity. '''
+    ''' Particle on SO(2) controlled in velocity. '''
     
     @contract(max_velocity='>0')
     def __init__(self, max_velocity):
@@ -18,7 +18,7 @@ class CircleVel(SimpleKinematics):
 
 
 class CircleForce(SimpleDynamics):
-    ''' Particle on S1 controlled in force. '''
+    ''' Particle on SO(2) controlled in force. '''
     
     @contract(max_force='>0', mass='>0')
     def __init__(self, max_force, mass):
