@@ -18,7 +18,7 @@ setup(name='PyVehiclesDynamics',
       
       description=description,
       long_description=long_description,
-      keywords="PROJECT_KEYWORDS",
+      keywords="PROJECT_KEYWORDS", # TODO: fill
       license="PROJECT_LICENSE",
       
       classifiers=[

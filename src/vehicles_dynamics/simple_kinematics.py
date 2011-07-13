@@ -1,5 +1,5 @@
 from . import Dynamics, contract, np
-from geometry import printm, SE3, se3
+from geometry import  SE3, se3
 from abc import abstractmethod
 
 class SimpleKinematics(Dynamics):
@@ -20,12 +20,9 @@ class SimpleKinematics(Dynamics):
     @contract(pose='SE3')
     def pose2state(self, pose):
         ''' Projects the pose to our subgroup, and sets the velocity to zero. '''
-        # the default is good for kinematics
         my_pose = self.pose_space.project_from(SE3, pose)
         my_vel = self.pose_space.algebra.zero()
-        printm('pose', my_pose, 'vel', my_vel)
-        assert my_pose.shape == my_vel.shape
-        self.pose_space.algebra.belongs(my_vel)
+        assert my_pose.shape == my_vel.shape 
         state = (my_pose, my_vel)
         return state
 
@@ -34,9 +31,7 @@ class SimpleKinematics(Dynamics):
         my_pose, my_vel = state
         assert my_pose.shape == my_vel.shape
         pose = self.pose_space.embed_in(SE3, my_pose)
-        vel = self.pose_space.algebra.embed_in(se3, my_vel)
-        SE3.belongs(pose, msg='bad embedding of %s' % self.pose_space)
-        se3.belongs(vel, msg='bad embedding of %s' % self.pose_space.algebra)
+        vel = self.pose_space.algebra.embed_in(se3, my_vel) 
         return pose, vel
  
     @abstractmethod
@@ -46,10 +41,7 @@ class SimpleKinematics(Dynamics):
     def _integrate(self, state, commands, dt):
         pose1, unused_vel1 = state #@UnusedVariable
         vel2 = self.compute_velocities(commands)
-        self.pose_space.algebra.belongs(vel2)
-        # TODO: make homeo...
-        Id = self.pose_space.identity()
-        step = self.pose_space.expmap(Id, vel2 * dt)
+        step = self.pose_space.group_from_algebra(vel2 * dt)
         pose2 = np.dot(pose1, step)
         return pose2, vel2
  
@@ -73,14 +65,13 @@ class SimpleDynamics(SimpleKinematics):
     def _integrate(self, state, commands, dt):
         pose1, vel1 = state #@UnusedVariable
         forces = self.compute_forces(commands)
-        self.pose_space.algebra.belongs(forces)
+        #self.pose_space.algebra.belongs(forces)
         # TODO: this is not in closed form
         # TODO: make smaller steps
         acc = forces / self.mass
         vel2 = vel1 + dt * acc
         midvel = 0.5 * (vel1 + vel2)
-        Id = self.pose_space.identity()
-        step = self.pose_space.expmap(Id, midvel * dt)
+        step = self.pose_space.group_from_algebra(midvel * dt)
         pose2 = np.dot(pose1, step)
         return pose2, vel2
  
