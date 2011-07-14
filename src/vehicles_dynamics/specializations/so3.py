@@ -16,13 +16,13 @@ class SO3Vel(SimpleKinematics):
 
 class SO3Force(SimpleDynamics):
     
-    @contract(max_force='seq[3](>0)', mass='>0')
-    def __init__(self, max_force, mass):
+    @contract(max_force='seq[3](>0)', mass='>0', damping='>=0')
+    def __init__(self, max_force, mass, damping):
         self.max_forces = np.array(max_force)
         SimpleDynamics.__init__(self,
                           pose_space=SO3,
                           commands_spec=[(-1, +1), (-1, +1), (-1, +1)],
-                          mass=mass)
+                          mass=mass, damping=damping)
     
     def compute_forces(self, commands):
         return hat_map(self.max_force * commands)

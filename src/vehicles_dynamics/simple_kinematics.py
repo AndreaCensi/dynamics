@@ -48,9 +48,10 @@ class SimpleKinematics(Dynamics):
 class SimpleDynamics(SimpleKinematics):
 
     @contract(mass='>0')
-    def __init__(self, pose_space, commands_spec, mass):
+    def __init__(self, pose_space, commands_spec, mass, damping):
         SimpleKinematics.__init__(self, pose_space, commands_spec) 
         self.mass = mass
+        self.damping = damping
 
     def __repr__(self):
         return "LieDynamics(%s)" % self.pose_space
@@ -67,8 +68,8 @@ class SimpleDynamics(SimpleKinematics):
         forces = self.compute_forces(commands)
         #self.pose_space.algebra.belongs(forces)
         # TODO: this is not in closed form
-        # TODO: make smaller steps
-        acc = forces / self.mass
+        # TODO: make smaller step
+        acc = (forces - vel1 * self.damping) / self.mass # XXX: like this?
         vel2 = vel1 + dt * acc
         midvel = 0.5 * (vel1 + vel2)
         step = self.pose_space.group_from_algebra(midvel * dt)

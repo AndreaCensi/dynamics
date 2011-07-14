@@ -20,12 +20,13 @@ class CircleVel(SimpleKinematics):
 class CircleForce(SimpleDynamics):
     ''' Particle on SO(2) controlled in force. '''
     
-    @contract(max_force='>0', mass='>0')
-    def __init__(self, max_force, mass):
+    @contract(max_force='>0', mass='>0', damping='>=0')
+    def __init__(self, max_force, mass, damping):
         SimpleDynamics.__init__(self,
                           pose_space=SO2,
                           commands_spec=[(-1, 1)],
-                          mass=mass)
+                          mass=mass,
+                          damping=damping)
         self.max_force = max_force
     
 

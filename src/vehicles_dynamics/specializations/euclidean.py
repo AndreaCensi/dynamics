@@ -20,7 +20,7 @@ class EuclideanForce(SimpleDynamics):
     ''' Particle in Euclidean space controlled in force. '''
     
     @contract(ndim='int,>0,N', max_force='seq[N](>0)', mass='>0')
-    def __init__(self, ndim, max_force, mass):
+    def __init__(self, ndim, max_force, mass, damping):
         self.ndim = ndim
         self.max_force = max_force
         self.mass = mass
@@ -28,7 +28,8 @@ class EuclideanForce(SimpleDynamics):
         SimpleDynamics.__init__(self,
                           pose_space=pose_space,
                           commands_spec=[(-1, 1)] * ndim,
-                          mass=mass)
+                          mass=mass,
+                          damping=damping)
     
     def compute_forces(self, commands):
         f = self.max_force * np.array(commands)
