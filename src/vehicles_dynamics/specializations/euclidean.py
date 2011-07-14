@@ -34,14 +34,3 @@ class EuclideanForce(SimpleDynamics):
     def compute_forces(self, commands):
         f = self.max_force * np.array(commands)
         return self.pose_space.algebra.from_vector(f)
-#
-#    
-#    def _integrate(self, state, commands, dt):
-#        position, velocity = state
-#        forces = np.array(commands)
-#        acceleration = forces / self.mass
-#        position2 = position + velocity * dt + 0.5 * acceleration * dt * dt 
-#        velocity2 = velocity + acceleration * dt 
-#        return (position2, velocity2)
-#
-#        
