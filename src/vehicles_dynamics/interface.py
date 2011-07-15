@@ -52,6 +52,10 @@ class Dynamics:
               pose_space='None|DifferentiableManifold',
               shape_space='None|DifferentiableManifold')
     def __init__(self, pose_space, shape_space, commands_spec, commands_names=None):
+        self.__pose_space = pose_space
+        self.__shape_space = shape_space
+        self.__state_space = "unset"
+
         self.commands_spec = commands_spec
         self.commands_name = commands_names
         if pose_space is not None and shape_space is not None:
@@ -62,10 +66,8 @@ class Dynamics:
             state_space = shape_space
         else:
             raise ValueError('pose_space and shape_space cannot be both None.')
-        
         self.__state_space = state_space
-        self.__pose_space = pose_space
-        self.__shape_space = shape_space
+        
     
     def check_commands(self, commands):
         ''' Raises an exception (InvalidCommands) if the commands are not valid. '''
@@ -126,7 +128,8 @@ class Dynamics:
         pass
  
     def __str__(self):
-        return ("Dyn:%s(pose:%s,shape:%s,cmds:%s)" % 
-                (self.__class__.__name__,
-                 self.__pose_space, self.__shape_space, self.commands_spec))
+        return self.__class__.__name__
+#        return ("Dyn:%s(pose:%s,shape:%s,cmds:%s)" % 
+#                (self.__class__.__name__,
+#                 self.__pose_space, self.__shape_space, self.commands_spec))
  

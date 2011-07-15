@@ -3,8 +3,8 @@ from geometry import (SE2, se2_from_linear_angular)
 
 class SE2Dynamics(SimpleKinematics):
     
-    @contract(max_linear_velocity='seq[2](>0)',
-              max_angular_velocity='>0',)
+    @contract(max_linear_velocity='seq[2](>=0)',
+              max_angular_velocity='>=0',)
     def __init__(self, max_linear_velocity, max_angular_velocity):
         self.max_linear_velocity = max_linear_velocity
         self.max_angular_velocity = max_angular_velocity
