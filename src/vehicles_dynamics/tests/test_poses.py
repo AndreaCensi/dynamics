@@ -1,6 +1,5 @@
-from geometry import SE2, SE2_from_translation_angle
+from geometry import SE2, SE2_from_translation_angle, SE3_from_SE2
 
-from numpy import radians
 import unittest
 import numpy as np
 
@@ -31,21 +30,27 @@ class PoseTest(unittest.TestCase):
             (([0, 0], 0), [Z, Z, M], ([0, 0], dt)),
             (([0, 0], 0), [Z, Z, m], ([0, 0], -dt)),
             
-            (([0, 0], radians(90)), [M, Z, Z], ([0, dt], radians(90))),
-            (([0, 0], radians(90)), [Z, M, Z], ([-dt, 0], radians(90)))
+            (([0, 0], np.radians(90)), [M, Z, Z], ([0, dt], np.radians(90))),
+            (([0, 0], np.radians(90)), [Z, M, Z], ([-dt, 0], np.radians(90)))
             
             # TODO: add some more tests with non-zero initial rotation
         ]
         
         for initial, commands, final in tests:
-            start_state = SE2_from_translation_angle(*initial)
-            final_state = SE2_from_translation_angle(*final)
-            print('%s -> [%s] -> %s' % 
-                  (SE2.friendly(start_state), commands, SE2.friendly(final_state)))
+            start_pose = SE2_from_translation_angle(*initial)
+            final_pose = SE2_from_translation_angle(*final)
+            
+            start_state = dynamics.pose2state(SE3_from_SE2(start_pose))
+            final_state = dynamics.pose2state(SE3_from_SE2(final_pose))
             commands = np.array(commands)
-            actual = dynamics.integrate(start_state, +commands, dt)              
-            SE2.assert_close(actual, final_state)
-            start2 = dynamics.integrate(final_state, -commands, dt)
-            SE2.assert_close(start_state, start2)
+
+            print('%s -> [%s] -> %s' % 
+                  (SE2.friendly(start_pose), commands, SE2.friendly(final_pose)))
+            
+            actual, dummy = dynamics.integrate(start_state, +commands, dt)              
+            SE2.assert_close(actual, final_pose)
+            
+            start2, dummy = dynamics.integrate(final_state, -commands, dt)
+            SE2.assert_close(start_pose, start2)
             
         

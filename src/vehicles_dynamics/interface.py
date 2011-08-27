@@ -98,6 +98,7 @@ class Dynamics:
 
     def get_commands_spec(self):
         """ Returns a commands spec """
+        # XXX:
         pass
         
     @contract(dt='>=0')
@@ -120,6 +121,7 @@ class Dynamics:
         return new_state
     
     @abstractmethod
+    @contract(pose='SE3')
     def pose2state(self, pose):
         pass
     
@@ -127,6 +129,11 @@ class Dynamics:
     def _integrate(self, state, commands, dt):
         pass
  
+    @abstractmethod
+    def state_to_yaml(self, state):
+        ''' Converts the state to a YAML representation.'''
+        pass
+    
     def __str__(self):
         return self.__class__.__name__
 #        return ("Dyn:%s(pose:%s,shape:%s,cmds:%s)" % 

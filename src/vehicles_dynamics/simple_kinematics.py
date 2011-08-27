@@ -1,6 +1,7 @@
 from . import Dynamics, contract, np
-from geometry import  SE3, se3
 from abc import abstractmethod
+from geometry import SE3, se3
+from geometry.yaml import to_yaml
 
 class SimpleKinematics(Dynamics):
     ''' 
@@ -17,6 +18,11 @@ class SimpleKinematics(Dynamics):
     def __repr__(self):
         return "LieKinematics(%s)" % self.pose_space
     
+    def state_to_yaml(self, state):
+        pose, vel = state
+        # TODO; bad assumption?
+        return to_yaml('TSE3', (pose, vel))
+        
     @contract(pose='SE3')
     def pose2state(self, pose):
         ''' Projects the pose to our subgroup, and sets the velocity to zero. '''
