@@ -11,5 +11,6 @@ logger.setLevel(logging.DEBUG)
 
 from .exceptions import *
 from .interface import *
-from .simple_kinematics import *
+from .lie_kinematics import *
+from .lie_dynamics import *
 from .specializations import *

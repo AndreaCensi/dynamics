@@ -4,8 +4,6 @@ from contracts import contract, new_contract
 from geometry import ProductManifold
 import traceback
 
-
-
 new_contract('interval', 'tuple((number,x),(number,>x))')
 
 class Dynamics:
@@ -42,7 +40,7 @@ class Dynamics:
             pose, vel = dynamics.joint_state(state, joint=0)
             
         where SE3.belongs(pose) and se3.belongs(vel) returns the pos/vel
-        of a joint.
+        of a joint for the given state.
             
     '''
     __metaclass__ = ABCMeta
@@ -52,77 +50,82 @@ class Dynamics:
               pose_space='None|DifferentiableManifold',
               shape_space='None|DifferentiableManifold')
     def __init__(self, pose_space, shape_space, commands_spec, commands_names=None):
-        self.__pose_space = pose_space
-        self.__shape_space = shape_space
-        self.__state_space = "unset"
+        self._pose_space = pose_space
+        self._shape_space = shape_space 
 
-        self.commands_spec = commands_spec
-        self.commands_name = commands_names
+        self._commands_spec = commands_spec
+        self._commands_names = commands_names
+        
         if pose_space is not None and shape_space is not None:
-            state_space = ProductManifold((pose_space, shape_space))
+            conf_space = pose_space.tangent_bundle()
+            state_space = ProductManifold((conf_space, shape_space))
         elif pose_space is not None and shape_space is None:
-            state_space = pose_space
+            conf_space = pose_space.tangent_bundle()
+            state_space = conf_space
         elif pose_space is None and shape_space is not None:
             state_space = shape_space
         else:
             raise ValueError('pose_space and shape_space cannot be both None.')
-        self.__state_space = state_space
+        self._state_space = state_space
         
     
     def check_commands(self, commands):
         ''' Raises an exception (InvalidCommands) if the commands are not valid. '''
-        # TODO
+        # TODO: not implemented
         pass
-    
-    def state_space(self):
+
+    def get_state_space(self):
         """ 
             Returns a Manifold instance describing the state space.
         
             If there is both a pose and a shape space, this is a ProductManifold. 
         """
-        return self.__state_space
+        return self._state_space
 
-    def pose_space(self):
+    def get_pose_space(self):
         """ 
-            Returns a Manifold instance describing the pose space 
+            Returns a DifferentiableManifold instance describing the pose space 
             (or None if we don't have one). 
         """
-        return self.__pose_space
+        return self._pose_space
 
-    def shape_space(self):
+    def get_shape_space(self):
         """ 
-            Returns a Manifold instance describing the shape space
+            Returns a DifferentiableManifold instance describing the shape space
             (or None if we don't have one). 
         """
-        return self.__shape_space
+        return self._shape_space
 
     def get_commands_spec(self):
-        """ Returns a commands spec """
-        # XXX:
-        pass
+        """ Returns the commands specification. """
+        return self._commands_spec
+    
+    def get_commands_names(self):
+        """ Returns the commands names. """
+        return self._commands_names
         
     @contract(dt='>=0')
     def integrate(self, state, commands, dt):
-        #self.__state_space.belongs(state)    
+        #self._state_space.belongs(state)    
         self.check_commands(commands)
         
         try:
             new_state = self._integrate(state, commands, dt)
         except:
             msg = 'Error while integrating.'
-            msg += '\n   state: %s' % state.__repr__()
+            msg += '\n   state: %s' % self._state_space.friendly(state)
             msg += '\ncommands: %s' % commands.__repr__()
             msg += '\n%s' % traceback.format_exc()
             logger.error(msg)
             raise
-            #raise DynamicsException(self, msg)
-        
-        #self.__state_space.belongs(new_state)
+
+        #self._state_space.belongs(new_state)
         return new_state
     
     @abstractmethod
     @contract(pose='SE3')
     def pose2state(self, pose):
+        ''' Returns the state that best approximates the given pose (in SE3).''' 
         pass
     
     @abstractmethod
@@ -134,9 +137,14 @@ class Dynamics:
         ''' Converts the state to a YAML representation.'''
         pass
     
-    def __str__(self):
-        return self.__class__.__name__
+    @abstractmethod
+    @contract(returns='tuple(SE3, se3)')
+    def joint_state(self, state, joint=0):
+        pass
+    
+    def _str_(self):
+        return self._class_._name_
 #        return ("Dyn:%s(pose:%s,shape:%s,cmds:%s)" % 
-#                (self.__class__.__name__,
-#                 self.__pose_space, self.__shape_space, self.commands_spec))
+#                (self._class_._name_,
+#                 self._pose_space, self._shape_space, self.commands_spec))
  

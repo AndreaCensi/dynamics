@@ -14,7 +14,7 @@ class SE2Forward(SimpleKinematics):
     
     def compute_velocities(self, commands):
         linear = [ self.linear_velocity, 0] 
-        angular = commands[0] * self.max_angular_velocity
-        vel = se2_from_linear_angular(linear, angular)
+        angular = float(commands[0]) * self.max_angular_velocity
+        vel = se2_from_linear_angular(linear, float(angular))
         return vel
 

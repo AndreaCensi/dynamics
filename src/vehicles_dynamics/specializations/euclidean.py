@@ -14,7 +14,7 @@ class EuclideanVel(SimpleKinematics):
     
     def compute_velocities(self, commands):
         vel = self.max_velocity * np.array(commands)
-        return self.pose_space.algebra.from_vector(vel)
+        return self.pose_space.algebra.algebra_from_vector(vel)
 
 class EuclideanForce(SimpleDynamics):
     ''' Particle in Euclidean space controlled in force. '''
@@ -33,4 +33,4 @@ class EuclideanForce(SimpleDynamics):
     
     def compute_forces(self, commands):
         f = self.max_force * np.array(commands)
-        return self.pose_space.algebra.from_vector(f)
+        return self.pose_space.algebra.algebra_from_vector(f)
