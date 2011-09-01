@@ -5,12 +5,15 @@ class SE2Forward(SimpleKinematics):
     
     @contract(linear_velocity='>0',
               max_angular_velocity='>0')
-    def __init__(self, linear_velocity, max_angular_velocity):
+    def __init__(self, linear_velocity, max_angular_velocity,
+                 noise_mult=None, noise_drift=None):
         self.linear_velocity = linear_velocity
         self.max_angular_velocity = max_angular_velocity
         SimpleKinematics.__init__(self,
                           pose_space=SE2,
-                          commands_spec=[(-1, +1)])
+                          commands_spec=[(-1, +1)],
+                          noise_mult=noise_mult,
+                          noise_drift=noise_drift)
     
     def compute_velocities(self, commands):
         linear = [ self.linear_velocity, 0] 

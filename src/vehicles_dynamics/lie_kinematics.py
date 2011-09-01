@@ -28,8 +28,8 @@ class SimpleKinematics(Dynamics):
     '''
     
     @contract(pose_space='DifferentiableManifold',
-              noise_drift='None|array[K]',
-              noise_mult='None|array[K]')
+              noise_drift='None|seq[K](>=0)',
+              noise_mult='None|seq[K](>=0)')
     def __init__(self, pose_space, commands_spec, noise_drift=None, noise_mult=None):
         if not pose_space.embeddable_in(SE3):
             msg = 'I expect a subgroup of SE3.'
@@ -37,18 +37,22 @@ class SimpleKinematics(Dynamics):
         algebra = pose_space.get_algebra()
         n = algebra.get_dimension()
         
+         
         if noise_drift is None:
             noise_drift = np.zeros(n)
         
         if noise_mult is None:
             noise_mult = np.zeros(n)
         
+        noise_drift = np.array(noise_drift)
+        noise_mult = np.array(noise_mult)
+        
         if noise_mult.size != n:
-            msg = 'Wrong size for noise_mult: %s' % str(noise_mult.shape)
+            msg = 'Wrong size for noise_mult: %s' % str(noise_mult)
             raise ValueError(msg)
         
         if noise_drift.size != n:
-            msg = 'Wrong size for noise_mult: %s' % str(noise_mult.shape)
+            msg = 'Wrong size for noise_mult: %s' % str(noise_mult)
             raise ValueError(msg)
         
         self.noise_drift = noise_drift
