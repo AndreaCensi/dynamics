@@ -9,9 +9,21 @@ class SE2Forward(SimpleKinematics):
                  noise_mult=None, noise_drift=None):
         self.linear_velocity = linear_velocity
         self.max_angular_velocity = max_angular_velocity
+        spec = {
+            'desc': 'Kinematic fly: fixed forward velocity',
+            'shape': [1],
+            'format': ['C'],
+            'range': [[-1, +1]],
+            'names': ['angular velocity'],
+            'rest': [0],
+            'extra': {'linear_velocity': linear_velocity,
+                      'max_angular_velocity': max_angular_velocity,
+                      'pose_space': 'SE2'}
+        }
+
         SimpleKinematics.__init__(self,
                           pose_space=SE2,
-                          commands_spec=[(-1, +1)],
+                          commands_spec=spec,
                           noise_mult=noise_mult,
                           noise_drift=noise_drift)
     

@@ -9,8 +9,17 @@ class EuclideanVel(SimpleKinematics):
         self.ndim = ndim
         self.max_velocity = np.array(max_velocity)
         pose_space = {1: Tran1, 2: Tran2, 3: Tran3}[ndim]
-        SimpleKinematics.__init__(self, pose_space,
-                            commands_spec=[(-1, 1)] * ndim)
+        spec = {
+            'desc': 'Particle in Euclidean space controlled in velocity',
+            'shape': [ndim],
+            'format': ['C']*ndim,
+            'range': [[-1, +1]]*ndim,
+            'names': ['vel%d' % d for d in range(1, ndim + 1)],
+            'rest': [0, 0],
+            'extra': {'max_velocity': max_velocity,
+                      'pose_space': '%s' % pose_space}
+        }
+        SimpleKinematics.__init__(self, pose_space, commands_spec=spec)
     
     def compute_velocities(self, commands):
         vel = self.max_velocity * np.array(commands)
@@ -25,9 +34,21 @@ class EuclideanForce(SimpleDynamics):
         self.max_force = max_force
         self.mass = mass
         pose_space = {1: Tran1, 2: Tran2, 3: Tran3}[ndim]
+        spec = {
+            'desc': 'Particle in Euclidean space controlled in force',
+            'format': ['C']*ndim,
+            'range': [[-1, +1]]*ndim,
+            'shape': [ndim],
+            'names': ['force%d' % d for d in range(1, ndim + 1)],
+            'rest': [0, 0],
+            'extra': {'max_force': max_force,
+                      'mass': mass,
+                      'damping': damping,
+                      'pose_space': '%s' % pose_space}
+        }
         SimpleDynamics.__init__(self,
                           pose_space=pose_space,
-                          commands_spec=[(-1, 1)] * ndim,
+                          commands_spec=spec,
                           mass=mass,
                           damping=damping)
     

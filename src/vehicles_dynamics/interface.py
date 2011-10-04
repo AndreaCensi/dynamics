@@ -45,16 +45,14 @@ class Dynamics:
     '''
     __metaclass__ = ABCMeta
     
-    @contract(commands_spec='list[K,>0](interval|list[>=2])',
-              commands_names='None|list[K](str)',
+    @contract(#commands_spec='list[K,>0](interval|list[>=2])',
+              commands_spec='dict',
               pose_space='None|DifferentiableManifold',
               shape_space='None|DifferentiableManifold')
-    def __init__(self, pose_space, shape_space, commands_spec, commands_names=None):
+    def __init__(self, pose_space, shape_space, commands_spec):
         self._pose_space = pose_space
         self._shape_space = shape_space 
-
-        self._commands_spec = commands_spec
-        self._commands_names = commands_names
+        self._commands_spec = commands_spec 
         
         if pose_space is not None and shape_space is not None:
             conf_space = pose_space.tangent_bundle()
@@ -142,9 +140,6 @@ class Dynamics:
     def joint_state(self, state, joint=0):
         pass
     
-    def _str_(self):
-        return self._class_._name_
-#        return ("Dyn:%s(pose:%s,shape:%s,cmds:%s)" % 
-#                (self._class_._name_,
-#                 self._pose_space, self._shape_space, self.commands_spec))
- 
+    def __str__(self):
+        return self.__class__.__name__
+

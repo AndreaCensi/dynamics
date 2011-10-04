@@ -7,9 +7,20 @@ class CircleVel(SimpleKinematics):
     
     @contract(max_velocity='>0')
     def __init__(self, max_velocity):
+        spec = {
+            'desc': 'Particle on SO(2) controled in velocity.',
+            'shape': [1],
+            'format': ['C'],
+            'range': [[-1, +1]],
+            'names': ['velocity'],
+            'rest': [0, 0],
+            'extra': {'max_velocity': max_velocity,
+                      'pose_space': 'SO2'}
+        }
+        
         SimpleKinematics.__init__(self,
                           pose_space=SO2,
-                          commands_spec=[(-1, 1)])
+                          commands_spec=spec)
         self.max_velocity = max_velocity    
     
     def compute_velocities(self, commands):
@@ -22,9 +33,22 @@ class CircleForce(SimpleDynamics):
     
     @contract(max_force='>0', mass='>0', damping='>=0')
     def __init__(self, max_force, mass, damping):
+        spec = {
+            'desc': 'Particle on SO(2) controled in force.',
+            'shape': [1],
+            'format': ['C'],
+            'range': [[-1, +1]],
+            'names': ['force'],
+            'rest': [0, 0],
+            'extra': {'max_force': max_force,
+                      'mass': mass,
+                      'damping': damping,
+                      'pose_space': 'SO2'}
+        }
+
         SimpleDynamics.__init__(self,
                           pose_space=SO2,
-                          commands_spec=[(-1, 1)],
+                          commands_spec=spec,
                           mass=mass,
                           damping=damping)
         self.max_force = max_force

@@ -9,9 +9,20 @@ class DifferentialDrive(SimpleKinematics):
     def __init__(self, max_linear_velocity, max_angular_velocity):
         self.max_linear_velocity = max_linear_velocity
         self.max_angular_velocity = max_angular_velocity
+        spec = {
+            'desc': 'Differential drive dynamics',
+            'shape': [2],
+            'format': ['C', 'C'],
+            'range': [[-1, +1], [-1, +1]],
+            'names': ['angular velocity', 'linear velocity'],
+            'rest': [0, 0],
+            'extra': {'max_linear_velocity': max_linear_velocity,
+                      'max_angular_velocity': max_angular_velocity,
+                      'pose_space': 'SE2'}
+        }
         SimpleKinematics.__init__(self,
                           pose_space=SE2,
-                          commands_spec=[(-1, +1), (-1, +1)])
+                          commands_spec=spec)
     
     def compute_velocities(self, commands):
         linear = np.array([ commands[1] * self.max_linear_velocity, 0])
