@@ -15,7 +15,7 @@ class SE2Forward(SimpleKinematics):
             'format': ['C'],
             'range': [[-1, +1]],
             'names': ['angular velocity'],
-            'rest': [0],
+            'default': [0],
             'extra': {'linear_velocity': linear_velocity,
                       'max_angular_velocity': max_angular_velocity,
                       'pose_space': 'SE2'}

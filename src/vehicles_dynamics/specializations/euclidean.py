@@ -15,7 +15,7 @@ class EuclideanVel(SimpleKinematics):
             'format': ['C']*ndim,
             'range': [[-1, +1]]*ndim,
             'names': ['vel%d' % d for d in range(1, ndim + 1)],
-            'rest': [0, 0],
+            'default': [0] * ndim,
             'extra': {'max_velocity': max_velocity,
                       'pose_space': '%s' % pose_space}
         }
@@ -40,7 +40,7 @@ class EuclideanForce(SimpleDynamics):
             'range': [[-1, +1]]*ndim,
             'shape': [ndim],
             'names': ['force%d' % d for d in range(1, ndim + 1)],
-            'rest': [0, 0],
+            'default': [0]*ndim,
             'extra': {'max_force': max_force,
                       'mass': mass,
                       'damping': damping,

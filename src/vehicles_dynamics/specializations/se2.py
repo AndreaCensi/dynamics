@@ -15,7 +15,7 @@ class SE2Dynamics(SimpleKinematics):
             'format': ['C', 'C', 'C'],
             'range': [[-1, +1], [-1, +1], [-1, +1]],
             'names': ['vx', 'vy', 'angular velocity'],
-            'rest': [0, 0],
+            'default': [0, 0, 0],
             'extra': {'max_linear_velocity': max_linear_velocity,
                       'max_angular_velocity': max_angular_velocity,
                       'pose_space': 'SE2'}

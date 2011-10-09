@@ -13,7 +13,7 @@ class SO3Vel(SimpleKinematics):
             'format': ['C', 'C', 'C'],
             'range': [[-1, +1], [-1, +1], [-1, +1]],
             'names': ['w1', 'w2', 'w3'],
-            'rest': [0, 0, 0],
+            'default': [0, 0, 0],
             'extra': {'max_angular_velocity': max_angular_velocity,
                       'pose_space': 'SO3'}
         }
@@ -34,7 +34,7 @@ class SO3Force(SimpleDynamics):
             'format': ['C', 'C', 'C'],
             'range': [[-1, +1], [-1, +1], [-1, +1]],
             'names': ['t1', 't2', 't3'],
-            'rest': [0, 0, 0],
+            'default': [0, 0, 0],
             'extra': {'max_force': max_force,
                       'mass': mass,
                       'damping': damping,

@@ -13,7 +13,7 @@ class CircleVel(SimpleKinematics):
             'format': ['C'],
             'range': [[-1, +1]],
             'names': ['velocity'],
-            'rest': [0, 0],
+            'default': [0],
             'extra': {'max_velocity': max_velocity,
                       'pose_space': 'SO2'}
         }
@@ -39,7 +39,7 @@ class CircleForce(SimpleDynamics):
             'format': ['C'],
             'range': [[-1, +1]],
             'names': ['force'],
-            'rest': [0, 0],
+            'default': [0],
             'extra': {'max_force': max_force,
                       'mass': mass,
                       'damping': damping,

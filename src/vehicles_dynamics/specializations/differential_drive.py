@@ -15,7 +15,7 @@ class DifferentialDrive(SimpleKinematics):
             'format': ['C', 'C'],
             'range': [[-1, +1], [-1, +1]],
             'names': ['angular velocity', 'linear velocity'],
-            'rest': [0, 0],
+            'default': [0, 0],
             'extra': {'max_linear_velocity': max_linear_velocity,
                       'max_angular_velocity': max_angular_velocity,
                       'pose_space': 'SE2'}
