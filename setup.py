@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = "0.5"
+version = "1.0"
 
 description = """""" 
 
@@ -14,12 +14,12 @@ long_description = read('README.rst')
 setup(name='PyVehiclesDynamics',
       author="Andrea Censi",
       author_email="andrea@cds.caltech.edu",
-      url='',
+      url='http://github.com/AndreaCensi/dynamics/',
       
       description=description,
       long_description=long_description,
-      keywords="PROJECT_KEYWORDS", # TODO: fill
-      license="PROJECT_LICENSE",
+      keywords="", # TODO: fill
+      license="",
       
       classifiers=[
         'Development Status :: 4 - Beta',
@@ -31,11 +31,14 @@ setup(name='PyVehiclesDynamics',
       ],
 
 	  version=version,
-      download_url='http://github.com/AndreaCensi/vehicles_dynamics/tarball/%s' % version,
+      download_url='http://github.com/AndreaCensi/dynamics/tarball/%s' % version,
       
       package_dir={'':'src'},
       packages=find_packages('src'),
-      install_requires=['PyGeometry', 'PyContracts'],
+      install_requires=[
+        'PyGeometry>=1.0,<2', 
+        'PyContracts>=1.2,<2'
+      ],
       tests_require=['nose'],
       entry_points={},
 )
