@@ -78,10 +78,11 @@ class SimpleKinematics(Dynamics):
         state = (my_pose, my_vel)
         return state
 
-    @contract(returns='tuple(SE3, se3)')
+    @contract(state='tuple(*,*)',returns='tuple(SE3, se3)')
     def joint_state(self, state, joint=0):
         my_pose, my_vel = state
-        assert my_pose.shape == my_vel.shape
+        self.pose_space.belongs(my_pose)
+        self.pose_space.algebra.belongs(my_vel)
         pose = self.pose_space.embed_in(SE3, my_pose)
         vel = self.pose_space.algebra.embed_in(se3, my_vel) 
         return pose, vel

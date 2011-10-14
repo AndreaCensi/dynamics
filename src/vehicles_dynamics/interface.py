@@ -111,7 +111,10 @@ class Dynamics:
             new_state = self._integrate(state, commands, dt)
         except:
             msg = 'Error while integrating.'
-            msg += '\n   state: %s' % self._state_space.friendly(state)
+#            try:
+#                msg += '\n   state: %s' % self._state_space.friendly(state)
+#            except: # XXX
+            msg += '\n   state: %s' % state.__repr__()
             msg += '\ncommands: %s' % commands.__repr__()
             msg += '\n%s' % traceback.format_exc()
             logger.error(msg)

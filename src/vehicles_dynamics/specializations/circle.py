@@ -23,6 +23,7 @@ class CircleVel(SimpleKinematics):
                           commands_spec=spec)
         self.max_velocity = max_velocity    
     
+    @contract(commands='array[1]')
     def compute_velocities(self, commands):
         omega = self.max_velocity * commands[0]
         return hat_map_2d(omega)
@@ -53,7 +54,7 @@ class CircleForce(SimpleDynamics):
                           damping=damping)
         self.max_force = max_force
     
-
+    @contract(commands='array[1]')
     def compute_forces(self, commands):
         force = self.max_force * commands[0]
         return hat_map_2d(force)
