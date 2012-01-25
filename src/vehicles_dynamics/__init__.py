@@ -1,10 +1,10 @@
-__version__ = '1.0'
+__version__ = '1.1'
 
 import numpy as np
 from contracts import contract
 import logging
 
-logging.basicConfig();
+logging.basicConfig()
 logger = logging.getLogger("vehicles_dynamics")
 logger.setLevel(logging.DEBUG)
 

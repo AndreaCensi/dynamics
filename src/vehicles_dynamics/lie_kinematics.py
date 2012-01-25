@@ -3,6 +3,7 @@ from abc import abstractmethod
 from geometry import SE3, se3
 from geometry.yaml import to_yaml
 
+
 class SimpleKinematics(Dynamics):
     ''' 
         A subclass for dynamics which have only a kinematic component.
@@ -25,71 +26,84 @@ class SimpleKinematics(Dynamics):
             
         For simplicity, both M0 and M1 are assumed to be diagonal matrices.
         They are called, respectively, noise_drift and noise_mult below.
+        
+        configuration = (pose, vel)
+        
     '''
-    
+
     @contract(pose_space='DifferentiableManifold',
               noise_drift='None|seq[K](>=0)',
               noise_mult='None|seq[K](>=0)')
-    def __init__(self, pose_space, commands_spec, noise_drift=None, noise_mult=None):
+    def __init__(self, pose_space, commands_spec,
+                 noise_drift=None, noise_mult=None):
         if not pose_space.embeddable_in(SE3):
             msg = 'I expect a subgroup of SE3.'
             raise ValueError(msg)
         algebra = pose_space.get_algebra()
         n = algebra.get_dimension()
-        
-         
+
         if noise_drift is None:
             noise_drift = np.zeros(n)
-        
+
         if noise_mult is None:
             noise_mult = np.zeros(n)
-        
+
         noise_drift = np.array(noise_drift)
         noise_mult = np.array(noise_mult)
-        
+
         if noise_mult.size != n:
             msg = 'Wrong size for noise_mult: %s' % str(noise_mult)
             raise ValueError(msg)
-        
+
         if noise_drift.size != n:
             msg = 'Wrong size for noise_mult: %s' % str(noise_mult)
             raise ValueError(msg)
-        
+
         self.noise_drift = noise_drift
         self.noise_mult = noise_mult
         self.pose_space = pose_space
-        shape_space = None
-        Dynamics.__init__(self, pose_space, shape_space, commands_spec) 
-    
+
+        conf_space = pose_space.tangent_bundle()
+
+        Dynamics.__init__(self, state_space=conf_space,
+                          commands_spec=commands_spec)
+
     def __repr__(self):
         return "LieKinematics(%s)" % self.pose_space
-    
+
     def state_to_yaml(self, state):
-        pose, vel = state
-        # TODO; bad assumption?
-        return to_yaml('TSE3', (pose, vel))
-        
+        return to_yaml('TSE3', state)
+
     @contract(pose='SE3')
     def pose2state(self, pose):
-        ''' Projects the pose to our subgroup, and sets the velocity to zero. '''
+        ''' 
+            Projects the pose to our subgroup, and sets the 
+            velocity to zero. 
+        '''
         my_pose = self.pose_space.project_from(SE3, pose)
         my_vel = self.pose_space.algebra.zero()
-        assert my_pose.shape == my_vel.shape 
-        state = (my_pose, my_vel)
-        return state
+        assert my_pose.shape == my_vel.shape
+        configuration = (my_pose, my_vel)
+        return configuration
 
-    @contract(state='tuple(*,*)',returns='tuple(SE3, se3)')
+    @contract(state='tuple(*,*)', returns='tuple(SE3, se3)')
     def joint_state(self, state, joint=0):
+        if joint != 0:
+            raise ValueError('Must be implemented by subclasses.')
         my_pose, my_vel = state
         self.pose_space.belongs(my_pose)
         self.pose_space.algebra.belongs(my_vel)
         pose = self.pose_space.embed_in(SE3, my_pose)
-        vel = self.pose_space.algebra.embed_in(se3, my_vel) 
-        return pose, vel
- 
+        vel = self.pose_space.algebra.embed_in(se3, my_vel)
+        configuration = (pose, vel)
+        return configuration
+
     @abstractmethod
     def compute_velocities(self, commands):
-        ''' Subclasses should implement this, return an element of the algebra. '''
+        ''' 
+            Subclasses should implement this and return an element 
+            of the algebra. 
+        '''
 
     def _integrate(self, state, commands, dt):
         pose1, unused_vel1 = state #@UnusedVariable
@@ -97,7 +111,7 @@ class SimpleKinematics(Dynamics):
         noiseless_vel = self.compute_velocities(commands)
         # Convert them to the vector representation
         # TODO: do not do any of this if the noise is 0
-        algebra = self.get_pose_space().get_algebra()
+        algebra = self.pose_space.get_algebra()
         w0 = algebra.vector_from_algebra(noiseless_vel)
         # w = w0 + Normal(M0 + M1*|w|)
         # Variance of the noise
@@ -107,7 +121,8 @@ class SimpleKinematics(Dynamics):
         w = w0 + wN
         # Convert back to algebra
         vel2 = algebra.algebra_from_vector(w)
-        step = self.get_pose_space().group_from_algebra(vel2 * dt)
+        step = self.pose_space.group_from_algebra(vel2 * dt)
         pose2 = np.dot(pose1, step)
-        return pose2, vel2
- 
+        config2 = pose2, vel2
+        return config2
+

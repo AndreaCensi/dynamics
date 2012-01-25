@@ -1,18 +1,19 @@
 from . import contract, np, SimpleKinematics
 from abc import abstractmethod
 
+
 class SimpleDynamics(SimpleKinematics):
     # TODO: add noise
-    
+
     @contract(mass='>0')
     def __init__(self, pose_space, commands_spec, mass, damping):
-        SimpleKinematics.__init__(self, pose_space, commands_spec) 
+        SimpleKinematics.__init__(self, pose_space, commands_spec)
         self.mass = mass
         self.damping = damping
 
     def __repr__(self):
         return "LieDynamics(%s)" % self.pose_space
-        
+
     def compute_velocities(self, commands):
         raise ValueError('Not needed!.')
 
@@ -32,4 +33,4 @@ class SimpleDynamics(SimpleKinematics):
         step = self.pose_space.group_from_algebra(midvel * dt)
         pose2 = np.dot(pose1, step)
         return pose2, vel2
- 
+
