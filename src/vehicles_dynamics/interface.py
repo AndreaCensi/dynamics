@@ -53,6 +53,7 @@ class Dynamics:
         self._commands_spec = commands_spec
         self._state_space = state_space
 
+    @contract(commands='array')
     def check_commands(self, commands):
         ''' 
             Raises an exception (InvalidCommands) if the commands 
@@ -61,15 +62,15 @@ class Dynamics:
         # TODO: not implemented
         pass
 
+    @contract(returns='DifferentiableManifold')
     def get_state_space(self):
         """ 
-            Returns a Manifold instance describing the state space.
-        
-            If there is both a pose and a shape space, 
-            this is a ProductManifold. 
+            Returns a DifferentiableManifold instance describing the state space.
+         
         """
         return self._state_space
 
+    @contract(returns='dict')
     def get_commands_spec(self):
         """ Returns the commands specification. """
         return self._commands_spec
