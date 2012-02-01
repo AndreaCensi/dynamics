@@ -72,7 +72,12 @@ class SimpleKinematics(Dynamics):
         return "LieKinematics(%s)" % self.pose_space
 
     def state_to_yaml(self, state):
-        return to_yaml('TSE3', state)
+        my_pose, my_vel = state
+        self.pose_space.belongs(my_pose)
+        self.pose_space.algebra.belongs(my_vel)
+        pose = self.pose_space.embed_in(SE3, my_pose)
+        vel = self.pose_space.algebra.embed_in(se3, my_vel)
+        return to_yaml('TSE3', (pose, vel))
 
     @contract(pose='SE3')
     def pose2state(self, pose):
