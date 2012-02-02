@@ -2,7 +2,7 @@ from . import logger
 from abc import ABCMeta, abstractmethod
 from contracts import contract, new_contract
 import traceback
-
+import geometry # For its contracts 
 new_contract('interval', 'tuple((number,x),(number,>x))')
 
 

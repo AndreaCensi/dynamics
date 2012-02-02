@@ -2,8 +2,9 @@
 
 class DynamicsException(Exception):
     def __init__(self, dynamics, msg):
+        Exception.__init__(self, dynamics, msg)
         self.dynamics = dynamics
-        Exception.__init__(self, msg)
+
 
 
 class InvalidState(DynamicsException):
