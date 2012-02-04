@@ -69,7 +69,7 @@ class CarWithWheels(Dynamics):
         car_state = self.car_state_from_big_state(state)
         steering = self.steering_from_big_state(state)
         return dict(car=self.car.state_to_yaml(car_state),
-                    steering=steering)
+                    steering=float(steering))
 
     def car_state_from_big_state(self, state):
         return state['car']

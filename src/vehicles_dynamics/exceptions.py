@@ -6,7 +6,6 @@ class DynamicsException(Exception):
         self.dynamics = dynamics
 
 
-
 class InvalidState(DynamicsException):
     def __init__(self, dynamics, state):
         self.state = state
